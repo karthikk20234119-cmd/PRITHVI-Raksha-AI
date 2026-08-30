@@ -1,7 +1,7 @@
 import { HashRouter as Router, Routes, Route, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect, createContext, useContext } from 'react';
 import { t, setLanguage, getCurrentLanguage, Language, languages } from './i18n/translations';
-import { loginAPI, setStoredToken, clearStoredToken, getStoredToken, getAlertStats } from './services/api';
+import { loginAPI, setStoredToken, clearStoredToken, getStoredToken, getAlertStats, getServerUrl, setServerUrl, isMobileApp, api } from './services/api';
 import Dashboard from './pages/Dashboard';
 import RiskMap from './pages/RiskMap';
 import Alerts from './pages/Alerts';
@@ -43,6 +43,94 @@ function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [apiUrl, setApiUrl] = useState('');
+  const [serverInput, setServerInput] = useState('');
+  const [showServerSettings, setShowServerSettings] = useState(false);
+  const [needsServer, setNeedsServer] = useState(false);
+
+  useEffect(() => {
+    // When app loads from server.url (Capacitor), use relative /api path
+    const isLoadedFromServer = window.location.port === '8000' || window.location.port === '';
+    const defaultUrl = isLoadedFromServer ? '/api' : '/api';
+    const saved = getServerUrl();
+    const currentUrl = saved && !isLoadedFromServer ? `${saved}/api` : defaultUrl;
+    setApiUrl(currentUrl);
+    setServerInput(saved || '');
+    // If loaded from server URL directly, no server config needed
+    if (isLoadedFromServer && !saved) {
+      setNeedsServer(false);
+      setShowServerSettings(false);
+    } else {
+      const needsConfig = !saved || saved.length < 5;
+      setNeedsServer(needsConfig);
+      if (needsConfig) {
+        setShowServerSettings(true);
+      }
+    }
+  }, []);
+
+  const saveServerUrl = () => {
+    const raw = serverInput.trim();
+    if (!raw) return;
+    let url = raw.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+    // Always ensure port is present — prevents double-port bugs later
+    if (!url.includes(':')) url += ':8000';
+    localStorage.setItem('geoshield_server_url', url);
+    const newApiUrl = `http://${url}/api`;
+    setApiUrl(newApiUrl);
+    setNeedsServer(false);
+    setShowServerSettings(false);
+    setError('');
+  };
+
+  const clearServerUrl = () => {
+    localStorage.removeItem('geoshield_server_url');
+    setServerInput('');
+    setApiUrl('/api');
+    setNeedsServer(true);
+    setShowServerSettings(true);
+    setError('Server URL cleared. Please enter a new one above.');
+  };
+
+  const detectServer = async () => {
+    setLoading(true);
+    setError('');
+    const candidates = [
+      'localhost:8000',
+      '127.0.0.1:8000',
+      '10.139.21.12:8000',
+      '10.123.230.162:8000',
+      '10.0.2.2:8000',
+      '192.168.1.1:8000',
+      '192.168.1.100:8000',
+      '192.168.0.1:8000',
+      '192.168.0.100:8000',
+      '172.16.0.1:8000',
+    ];
+    
+    for (const candidate of candidates) {
+      try {
+        const testUrl = `http://${candidate}/api/health`;
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 1500);
+        const res = await fetch(testUrl, { signal: controller.signal, mode: 'cors' });
+        clearTimeout(timeoutId);
+        if (res.ok) {
+          setServerInput(candidate);
+          saveServerUrl();
+          setError(`Connected to server at ${candidate}`);
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        // try next
+      }
+    }
+    
+    setError('Auto-detect failed. Please enter server IP manually below.');
+    setShowServerSettings(true);
+    setLoading(false);
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,9 +147,133 @@ function LoginPage() {
       login(res.data.user.name, res.data.user.role);
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Login failed. Please try again.');
+      const status = err.response?.status;
+      const detail = err.response?.data?.detail;
+      const currentApiUrl = getServerUrl() ? `http://${getServerUrl()}/api` : '/api';
+      const isNetworkError = !err.response || status === 0 || status === undefined || err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.code === 'ERR_NETWORK';
+      if (isNetworkError) {
+        setError(`Cannot reach backend at ${currentApiUrl}. Check network or set Backend URL in Settings.`);
+      } else if (status === 401) {
+        setError(detail || 'Invalid email or password');
+      } else {
+        setError(detail || `Login failed (HTTP ${status || 'error'})`);
+      }
+      console.error('Login error:', err);
       setLoading(false);
     }
+  };
+
+  const testConnection = async () => {
+    setLoading(true);
+    setError('');
+    try {
+      const res = await loginAPI(email || 'admin@geoshield.gov.in', password || 'admin123');
+      setStoredToken(res.data.token);
+      login(res.data.user.name, res.data.user.role);
+      navigate('/');
+    } catch (err: any) {
+      const status = err.response?.status;
+      const detail = err.response?.data?.detail;
+      const currentApiUrl = getServerUrl() ? `http://${getServerUrl()}/api` : '/api';
+      const isNetworkError = !err.response || status === 0 || status === undefined || err.code === 'ECONNREFUSED' || err.code === 'ENOTFOUND' || err.code === 'ERR_NETWORK';
+      if (isNetworkError) {
+        setError(`Cannot reach backend at ${currentApiUrl}. Check network or set Backend URL in Settings.`);
+      } else if (status === 401) {
+        setError(detail || 'Invalid email or password');
+      } else {
+        setError(detail || `Login failed (HTTP ${status || 'error'})`);
+      }
+      console.error('Login error:', err);
+      setLoading(false);
+    }
+  };
+
+  // Helper: get clean base URL like http://10.5.66.80:8000
+  const getBaseUrl = (): string => {
+    let host = getServerUrl();
+    if (!host) return '';
+    // Strip any protocol prefix
+    host = host.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+    // Ensure port present
+    if (!host.includes(':')) host += ':8000';
+    return `http://${host}`;
+  };
+
+  // XMLHttpRequest bypasses WebView CORS restrictions that block fetch()
+  const xhrFetch = (url: string, timeoutMs = 5000): Promise<{status: number; contentType: string; body: string}> => {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => { xhr.abort(); reject(new Error('Timeout')); }, timeoutMs);
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', url, true);
+      xhr.timeout = timeoutMs;
+      xhr.onload = () => {
+        clearTimeout(timer);
+        resolve({ status: xhr.status, contentType: xhr.getResponseHeader('content-type') || 'unknown', body: xhr.responseText });
+      };
+      xhr.onerror = () => { clearTimeout(timer); reject(new Error('Network error')); };
+      xhr.ontimeout = () => { clearTimeout(timer); reject(new Error('Timeout')); };
+      xhr.send();
+    });
+  };
+
+  const checkHealth = async () => {
+    setLoading(true);
+    setError('');
+    const base = getBaseUrl();
+    if (!base) {
+      setError('❌ Enter server IP in Settings first (e.g. 192.168.1.5:8000)');
+      setShowServerSettings(true);
+      setLoading(false);
+      return;
+    }
+    const endpoints = [`${base}/health`, `${base}/api/health`];
+    for (const url of endpoints) {
+      try {
+        const result = await xhrFetch(url);
+        if (result.contentType.includes('application/json')) {
+          setError(`✅ Backend reachable at ${url}! HTTP ${result.status}`);
+          setLoading(false);
+          return;
+        }
+      } catch (e) {
+        continue;
+      }
+    }
+    setError(`❌ Cannot reach backend at ${base}. Check phone is on same WiFi, no VPN, no AP isolation.`);
+    setShowServerSettings(true);
+    setLoading(false);
+  };
+
+  const testRaw = async () => {
+    setLoading(true);
+    setError('');
+    const base = getBaseUrl();
+    if (!base) {
+      setError('❌ Enter server IP in Settings first (e.g. 192.168.1.5:8000)');
+      setShowServerSettings(true);
+      setLoading(false);
+      return;
+    }
+    const endpoints = [
+      `${base}/health`,
+      `${base}/api/health`,
+    ];
+    const results: string[] = [];
+    for (const url of endpoints) {
+      try {
+        const r = await xhrFetch(url);
+        const isJson = r.contentType.includes('json');
+        const icon = isJson ? '✅' : '⚠️';
+        results.push(`${icon} ${url} → HTTP ${r.status} CT: ${r.contentType}\n   Body: ${r.body.slice(0, 150)}`);
+      } catch (e: any) {
+        results.push(`❌ ${url} → ${e.message || 'Network error'}`);
+      }
+    }
+    const allJson = results.every(r => r.startsWith('✅'));
+    const allFail = results.every(r => r.startsWith('❌'));
+    const header = allJson ? '✅ All endpoints returning JSON!' : allFail ? '❌ Cannot reach any endpoint' : '⚠️ Mixed results — see details below';
+    setError(`${header}\n\n${results.join('\n\n')}`);
+    setLoading(false);
   };
 
   return (
@@ -81,6 +293,54 @@ function LoginPage() {
             <p className="text-dark-500 text-xs mt-0.5">North Eastern Region, India</p>
           </div>
           <form onSubmit={handleLogin} className="space-y-4">
+            {needsServer && (
+              <div className="bg-amber-600/10 border border-amber-600/30 rounded-xl p-3">
+                <p className="text-xs text-amber-400 font-medium">⚠️ Server URL not configured. Set it below before logging in.</p>
+              </div>
+            )}
+            {error && (
+              <p className="text-xs text-red-400 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2">{error}</p>
+            )}
+            <div className={`bg-dark-800/50 border rounded-xl p-3 space-y-2 ${needsServer ? 'border-amber-600/50' : 'border-dark-700'}`}>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] text-dark-400 font-medium">🌐 Server Connection</span>
+                <span className="text-[10px] text-dark-500">API: {apiUrl}</span>
+              </div>
+              <input
+                type="text"
+                value={serverInput}
+                onChange={(e) => setServerInput(e.target.value)}
+                placeholder="e.g. 192.168.1.100:8000 or 10.0.2.2:8000"
+                className="w-full text-xs px-3 py-2 rounded-lg bg-dark-900 border border-dark-600 text-white placeholder-dark-500 focus:outline-none focus:border-green-600/50"
+              />
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={saveServerUrl}
+                  className="flex-1 py-1.5 rounded-lg bg-green-600/20 text-green-400 text-[11px] font-medium border border-green-600/30 hover:bg-green-600/30"
+                >
+                  Save & Connect
+                </button>
+                <button
+                  type="button"
+                  onClick={detectServer}
+                  disabled={loading}
+                  className="flex-1 py-1.5 rounded-lg bg-blue-600/20 text-blue-400 text-[11px] font-medium border border-blue-600/30 hover:bg-blue-600/30 disabled:opacity-50"
+                >
+                  Auto-detect
+                </button>
+                <button
+                  type="button"
+                  onClick={clearServerUrl}
+                  className="px-3 py-1.5 rounded-lg bg-dark-700 text-dark-400 text-[11px] font-medium border border-dark-600 hover:text-red-400"
+                >
+                  Clear
+                </button>
+              </div>
+              <p className="text-[10px] text-dark-500">
+                Emulator: <span className="text-green-400">10.0.2.2:8000</span> • Physical device: use your PC's LAN IP (e.g. <span className="text-green-400">192.168.1.100:8000</span>)
+              </p>
+            </div>
             <div>
               <label className="text-xs text-dark-400 mb-1 block">{t('emailLabel')}</label>
               <input
@@ -101,12 +361,9 @@ function LoginPage() {
                 className="w-full px-4 py-3 rounded-xl bg-dark-800 border border-dark-700 text-white text-sm placeholder-dark-500 focus:outline-none focus:border-green-600/50 focus:ring-1 focus:ring-green-600/30 transition-all"
               />
             </div>
-            {error && (
-              <p className="text-xs text-red-400 bg-red-600/10 border border-red-600/20 rounded-lg px-3 py-2">{error}</p>
-            )}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || needsServer}
               className="w-full py-3 rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 text-white font-medium text-sm hover:from-green-500 hover:to-emerald-500 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {loading ? (
@@ -118,6 +375,35 @@ function LoginPage() {
                 </>
               )}
             </button>
+            {needsServer && (
+              <p className="text-[10px] text-amber-400 text-center">Configure server URL above to enable login</p>
+            )}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={testConnection}
+                disabled={loading || needsServer}
+                className="flex-1 py-2 rounded-xl bg-dark-800 text-dark-300 text-xs font-medium border border-dark-700 hover:text-white hover:border-dark-600 transition-all disabled:opacity-50"
+              >
+                Test Login
+              </button>
+              <button
+                type="button"
+                onClick={checkHealth}
+                disabled={loading}
+                className="flex-1 py-2 rounded-xl bg-dark-800 text-dark-300 text-xs font-medium border border-dark-700 hover:text-white hover:border-dark-600 transition-all disabled:opacity-50"
+              >
+                Check Backend
+              </button>
+              <button
+                type="button"
+                onClick={testRaw}
+                disabled={loading}
+                className="flex-1 py-2 rounded-xl bg-dark-800 text-dark-300 text-xs font-medium border border-dark-700 hover:text-white hover:border-dark-600 transition-all disabled:opacity-50"
+              >
+                Raw Test
+              </button>
+            </div>
           </form>
           <div className="mt-6 pt-4 border-t border-dark-700">
             <p className="text-[10px] text-dark-500 text-center">
@@ -135,11 +421,14 @@ function LoginPage() {
                 key={demo.email}
                 type="button"
                 onClick={() => { setEmail(demo.email); setPassword(demo.password); }}
-                className="text-[10px] text-dark-400 hover:text-green-400 px-2 py-1.5 rounded-lg bg-dark-800/50 border border-dark-700 hover:border-green-600/30 transition-all"
+                className="text-xs text-dark-300 hover:text-green-400 px-3 py-2.5 rounded-lg bg-dark-800/50 border border-dark-700 hover:border-green-600/30 transition-all min-h-[44px]"
               >
                 {demo.label}
               </button>
             ))}
+          </div>
+          <div className="mt-4 text-[10px] text-dark-500 text-center">
+            API: {apiUrl}
           </div>
         </div>
       </div>
@@ -150,8 +439,10 @@ function LoginPage() {
 function MainLayout() {
   const [lang, setLangState] = useState<Language>(getCurrentLanguage());
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeAlerts, setActiveAlerts] = useState(0);
+  const [serverUrl, setServerUrlState] = useState(getServerUrl());
   const { user, logout } = useAuth();
   const location = useLocation();
 
@@ -191,9 +482,17 @@ function MainLayout() {
 
   return (
     <div className="flex h-screen overflow-hidden bg-dark-950">
+      {/* Mobile Backdrop */}
+      {mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
-        className={`${sidebarOpen ? 'w-64' : 'w-[72px]'} transition-all duration-300 bg-dark-900 border-r border-dark-700 flex flex-col flex-shrink-0`}
+        className={`${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0 fixed inset-y-0 left-0 z-50 md:relative md:z-auto transition-all duration-300 ${sidebarOpen ? 'w-64' : 'w-[72px]'} bg-dark-900 border-r border-dark-700 flex flex-col flex-shrink-0`}
       >
         {/* Logo */}
         <div className="p-4 border-b border-dark-700">
@@ -232,6 +531,7 @@ function MainLayout() {
               key={item.to}
               to={item.to}
               end={item.to === '/'}
+              onClick={() => setMobileMenuOpen(false)}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group relative ${
                   isActive
@@ -269,6 +569,7 @@ function MainLayout() {
                 <NavLink
                   key={s.id}
                   to={`/station/${s.id}`}
+                  onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-xs text-dark-400 hover:bg-dark-800 hover:text-white transition-all"
                 >
                   <div className={`w-1.5 h-1.5 rounded-full ${
@@ -306,8 +607,26 @@ function MainLayout() {
                   )
                 )}
               </div>
-            </div>
-          ) : (
+               <div className="space-y-2">
+                 <label className="text-[10px] text-dark-500 font-medium">Backend URL</label>
+                 <div className="flex gap-1">
+                   <input
+                     type="text"
+                     value={serverUrl}
+                     onChange={(e) => setServerUrlState(e.target.value)}
+                     placeholder="http://192.168.1.100:8000"
+                     className="flex-1 text-[11px] px-2 py-1.5 rounded-lg bg-dark-800 border border-dark-700 text-white placeholder-dark-500 focus:outline-none focus:border-green-600/50"
+                   />
+                   <button
+                     onClick={() => setServerUrl(serverUrl)}
+                     className="text-[11px] px-2 py-1.5 rounded-lg bg-green-600/20 text-green-400 border border-green-600/30 hover:bg-green-600/30"
+                   >
+                     Save
+                   </button>
+                 </div>
+               </div>
+             </div>
+           ) : (
             <button
               onClick={() => setSidebarOpen(true)}
               className="w-full flex justify-center text-dark-400 hover:text-white p-1"
@@ -350,7 +669,15 @@ function MainLayout() {
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header Bar */}
         <header className="h-12 border-b border-dark-700 bg-dark-900/80 backdrop-blur-sm flex items-center justify-between px-4 flex-shrink-0">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="md:hidden p-1.5 -ml-1.5 rounded-lg text-dark-300 hover:text-white hover:bg-dark-800 transition-all"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
             <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-green-600/10 border border-green-600/20">
               <Radio className="w-3 h-3 text-green-400" />
               <span className="text-[10px] text-green-400 font-semibold">LIVE</span>

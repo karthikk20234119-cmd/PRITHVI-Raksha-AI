@@ -1,198 +1,21 @@
-============================= test session starts ==============================
-platform linux -- Python 3.14.4, pytest-9.1.1, pluggy-1.6.0 -- /usr/bin/python3
-cachedir: .pytest_cache
-rootdir: /home/sage/Desktop/GeoShield/backend
-plugins: anyio-4.11.0, typeguard-4.4.4
-collecting ... collected 75 items
-
-tests/test_api.py::TestHealthAndAuth::test_health_check PASSED           [  1%]
-tests/test_api.py::TestHealthAndAuth::test_login_valid PASSED            [  2%]
-tests/test_api.py::TestHealthAndAuth::test_login_invalid PASSED          [  4%]
-tests/test_api.py::TestHealthAndAuth::test_login_missing_fields PASSED   [  5%]
-tests/test_api.py::TestDashboard::test_stats PASSED                      [  6%]
-tests/test_api.py::TestDashboard::test_risk_heatmap PASSED               [  8%]
-tests/test_api.py::TestDashboard::test_rainfall_trend PASSED             [  9%]
-tests/test_api.py::TestDashboard::test_risk_trend PASSED                 [ 10%]
-tests/test_api.py::TestDashboard::test_state_summary PASSED              [ 12%]
-tests/test_api.py::TestSensors::test_stations_list PASSED                [ 13%]
-tests/test_api.py::TestSensors::test_station_detail PASSED               [ 14%]
-tests/test_api.py::TestSensors::test_station_not_found PASSED            [ 16%]
-tests/test_api.py::TestSensors::test_station_history PASSED              [ 17%]
-tests/test_api.py::TestSensors::test_latest_readings PASSED              [ 18%]
-tests/test_api.py::TestAlerts::test_alerts_list PASSED                   [ 20%]
-tests/test_api.py::TestAlerts::test_alerts_active PASSED                 [ 21%]
-tests/test_api.py::TestAlerts::test_alerts_stats PASSED                  [ 22%]
-tests/test_api.py::TestAlerts::test_alerts_timeline PASSED               [ 24%]
-tests/test_api.py::TestAlerts::test_alerts_history PASSED                [ 25%]
-tests/test_api.py::TestPredict::test_predict_valid PASSED                [ 26%]
-tests/test_api.py::TestPredict::test_predict_risk_level_consistent PASSED [ 28%]
-tests/test_api.py::TestPredict::test_predict_invalid_coords PASSED       [ 29%]
-tests/test_api.py::TestSimulate::test_simulate_with_auth PASSED          [ 30%]
-tests/test_api.py::TestExport::test_geojson PASSED                       [ 32%]
-tests/test_api.py::TestExport::test_csv PASSED                           [ 33%]
-tests/test_api.py::TestExport::test_risk_zones PASSED                    [ 34%]
-tests/test_api.py::TestWeather::test_weather_data PASSED                 [ 36%]
-tests/test_api.py::TestWeather::test_weather_forecast PASSED             [ 37%]
-tests/test_api.py::TestSatellite::test_satellite_data PASSED             [ 38%]
-tests/test_api.py::TestSatellite::test_satellite_summary PASSED          [ 40%]
-tests/test_api.py::TestSatellite::test_satellite_risk_zones PASSED       [ 41%]
-tests/test_api.py::TestInfrastructure::test_roads PASSED                 [ 42%]
-tests/test_api.py::TestInfrastructure::test_villages PASSED              [ 44%]
-tests/test_api.py::TestFrontend::test_serves_index PASSED                [ 45%]
-tests/test_api.py::TestFrontend::test_spa_routes PASSED                  [ 46%]
-tests/test_e2e.py::TestCoreBackend::test_health_returns_200 PASSED       [ 48%]
-tests/test_e2e.py::TestCoreBackend::test_login_returns_jwt_token PASSED  [ 49%]
-tests/test_e2e.py::TestCoreBackend::test_unauthenticated_access_denied PASSED [ 50%]
-tests/test_e2e.py::TestDashboardFlow::test_stats_has_all_fields PASSED   [ 52%]
-tests/test_e2e.py::TestDashboardFlow::test_heatmap_has_coordinates PASSED [ 53%]
-tests/test_e2e.py::TestDashboardFlow::test_rainfall_trend_has_hourly_data PASSED [ 54%]
-tests/test_e2e.py::TestDashboardFlow::test_state_summary_has_8_states PASSED [ 56%]
-tests/test_e2e.py::TestDashboardFlow::test_risk_distribution_sums_correctly PASSED [ 57%]
-tests/test_e2e.py::TestSensorFlow::test_all_20_stations_present PASSED   [ 58%]
-tests/test_e2e.py::TestSensorFlow::test_station_detail_has_readings PASSED [ 60%]
-tests/test_e2e.py::TestSensorFlow::test_station_history_has_time_range PASSED [ 61%]
-tests/test_e2e.py::TestAlertsFlow::test_alerts_have_required_fields PASSED [ 62%]
-tests/test_e2e.py::TestAlertsFlow::test_alert_stats_match_list PASSED    [ 64%]
-tests/test_e2e.py::TestAlertsFlow::test_alert_timeline_has_structure PASSED [ 65%]
-tests/test_e2e.py::TestAlertsFlow::test_alert_history_has_daily_data PASSED [ 66%]
-tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_creates_alert PASSED [ 68%]
-tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_high_intensity PASSED [ 69%]
-tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_requires_auth PASSED [ 70%]
-tests/test_e2e.py::TestPredictionFlow::test_predict_returns_risk_assessment PASSED [ 72%]
-tests/test_e2e.py::TestPredictionFlow::test_predict_contributing_factors PASSED [ 73%]
-tests/test_e2e.py::TestFloodFlow::test_flood_data_has_districts PASSED   [ 74%]
-tests/test_e2e.py::TestFloodFlow::test_flood_summary_has_metrics PASSED  [ 76%]
-tests/test_e2e.py::TestFloodFlow::test_flood_correlation_has_insight PASSED [ 77%]
-tests/test_e2e.py::TestSatelliteFlow::test_satellite_data_has_all_stations PASSED [ 78%]
-tests/test_e2e.py::TestSatelliteFlow::test_satellite_summary_has_ranges PASSED [ 80%]
-tests/test_e2e.py::TestSatelliteFlow::test_satellite_risk_zones_scored PASSED [ 81%]
-tests/test_e2e.py::TestWeatherFlow::test_weather_has_current_conditions PASSED [ 82%]
-tests/test_e2e.py::TestWeatherFlow::test_weather_forecast_has_future_data PASSED [ 84%]
-tests/test_e2e.py::TestExportFlow::test_geojson_is_valid PASSED          [ 85%]
-tests/test_e2e.py::TestExportFlow::test_csv_has_headers PASSED           [ 86%]
-tests/test_e2e.py::TestExportFlow::test_risk_zones_has_all_stations PASSED [ 88%]
-tests/test_e2e.py::TestInfrastructureFlow::test_roads_have_status PASSED [ 89%]
-tests/test_e2e.py::TestInfrastructureFlow::test_villages_have_population PASSED [ 90%]
-tests/test_e2e.py::TestFrontendRoutes::test_main_page_loads PASSED       [ 92%]
-tests/test_e2e.py::TestFrontendRoutes::test_all_spa_routes PASSED        [ 93%]
-tests/test_e2e.py::TestFrontendRoutes::test_station_detail_route PASSED  [ 94%]
-tests/test_e2e.py::TestAlertWorkflow::test_acknowledge_alert PASSED      [ 96%]
-tests/test_e2e.py::TestSecurity::test_invalid_login_rejected PASSED      [ 97%]
-tests/test_e2e.py::TestSecurity::test_protected_endpoint_without_token PASSED [ 98%]
-tests/test_e2e.py::TestSecurity::test_citizen_cannot_resolve_alerts PASSED [100%]
-
-=============================== warnings summary ===============================
-app/database.py:15
-  /home/sage/Desktop/GeoShield/backend/tests/../app/database.py:15: MovedIn20Warning: The ``declarative_base()`` function is now available as sqlalchemy.orm.declarative_base(). (deprecated since: 2.0) (Background on SQLAlchemy 2.0 at: https://sqlalche.me/e/b8d9)
-    Base = declarative_base()
-
-app/seed_data.py:124: 3380 warnings
-  /home/sage/Desktop/GeoShield/backend/tests/../app/seed_data.py:124: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    now = datetime.utcnow() - timedelta(hours=hours_ago)
-
-app/seed_data.py:216: 1120 warnings
-  /home/sage/Desktop/GeoShield/backend/tests/../app/seed_data.py:216: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    now = datetime.utcnow() - timedelta(hours=hours_ago)
-
-../../../.local/lib/python3.14/site-packages/joblib/numpy_pickle.py:207: 813 warnings
-  /home/sage/.local/lib/python3.14/site-packages/joblib/numpy_pickle.py:207: DeprecationWarning: Setting the shape on a NumPy array has been deprecated in NumPy 2.5.
-  As an alternative, you can create a new view using np.reshape (with copy=False if needed).
-    array.shape = self.shape
-
-app/seed_data.py:270: 97 warnings
-  /home/sage/Desktop/GeoShield/backend/tests/../app/seed_data.py:270: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    alert_time = datetime.utcnow() - timedelta(days=day_offset, hours=random.randint(0, 23))
-
-app/seed_risk_history.py:25: 960 warnings
-  /home/sage/Desktop/GeoShield/backend/tests/../app/seed_risk_history.py:25: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    ts = datetime.utcnow() - timedelta(hours=hours_ago)
-
-app/main.py:101
-  /home/sage/Desktop/GeoShield/backend/tests/../app/main.py:101: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    if _dt.utcnow() - last_dt > _td(hours=6):
-
-tests/test_api.py::TestHealthAndAuth::test_health_check
-tests/test_e2e.py::TestCoreBackend::test_health_returns_200
-  /home/sage/Desktop/GeoShield/backend/tests/../app/main.py:144: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
-
-tests/test_api.py::TestHealthAndAuth::test_login_valid
-tests/test_api.py::TestSimulate::test_simulate_with_auth
-tests/test_e2e.py::TestCoreBackend::test_login_returns_jwt_token
-tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_creates_alert
-tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_high_intensity
-tests/test_e2e.py::TestAlertWorkflow::test_acknowledge_alert
-tests/test_e2e.py::TestSecurity::test_citizen_cannot_resolve_alerts
-  /home/sage/Desktop/GeoShield/backend/tests/../app/auth.py:53: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    "iat": datetime.utcnow(),
-
-tests/test_api.py::TestHealthAndAuth::test_login_valid
-tests/test_api.py::TestSimulate::test_simulate_with_auth
-tests/test_e2e.py::TestCoreBackend::test_login_returns_jwt_token
-tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_creates_alert
-tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_high_intensity
-tests/test_e2e.py::TestAlertWorkflow::test_acknowledge_alert
-tests/test_e2e.py::TestSecurity::test_citizen_cannot_resolve_alerts
-  /home/sage/Desktop/GeoShield/backend/tests/../app/auth.py:54: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    "exp": datetime.utcnow() + timedelta(hours=JWT_EXPIRY_HOURS),
-
-tests/test_api.py::TestDashboard::test_stats
-tests/test_e2e.py::TestDashboardFlow::test_stats_has_all_fields
-tests/test_e2e.py::TestDashboardFlow::test_risk_distribution_sums_correctly
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/dashboard.py:66: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    yesterday = datetime.utcnow() - timedelta(hours=24)
-
-tests/test_api.py::TestDashboard::test_stats
-tests/test_e2e.py::TestDashboardFlow::test_stats_has_all_fields
-tests/test_e2e.py::TestDashboardFlow::test_risk_distribution_sums_correctly
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/dashboard.py:92: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    "last_updated": datetime.utcnow().isoformat(),
-
-tests/test_api.py::TestDashboard::test_rainfall_trend
-tests/test_e2e.py::TestDashboardFlow::test_rainfall_trend_has_hourly_data
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/dashboard.py:139: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    since = datetime.utcnow() - timedelta(hours=48)
-
-tests/test_api.py::TestDashboard::test_risk_trend
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/dashboard.py:160: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    since = datetime.utcnow() - timedelta(hours=48)
-
-tests/test_api.py::TestSensors::test_station_history
-tests/test_e2e.py::TestSensorFlow::test_station_history_has_time_range
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/sensors.py:132: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    since = datetime.utcnow() - timedelta(hours=hours)
-
-tests/test_api.py::TestAlerts::test_alerts_timeline
-tests/test_e2e.py::TestAlertsFlow::test_alert_timeline_has_structure
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/alerts_timeline.py:29: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    since = datetime.utcnow() - timedelta(hours=hours)
-
-tests/test_api.py::TestAlerts::test_alerts_history
-tests/test_e2e.py::TestAlertsFlow::test_alert_history_has_daily_data
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/alerts_timeline.py:90: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
-    since = datetime.utcnow() - timedelta(days=days)
-
-tests/test_api.py::TestPredict::test_predict_valid
-tests/test_api.py::TestPredict::test_predict_risk_level_consistent
-tests/test_e2e.py::TestPredictionFlow::test_predict_returns_risk_assessment
-tests/test_e2e.py::TestPredictionFlow::test_predict_contributing_factors
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/predict.py:86: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+tests/test_e2e.py::TestEnhancedML::test_enhanced_predict_terrain_enrichment
+  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/predict.py:113: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     "timestamp": datetime.utcnow().isoformat(),
 
 tests/test_api.py::TestSimulate::test_simulate_with_auth
 tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_creates_alert
 tests/test_e2e.py::TestSimulatorAlertFlow::test_simulate_high_intensity
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/simulator.py:76: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/simulator.py:77: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     timestamp=datetime.utcnow(),
 
 tests/test_api.py::TestExport::test_geojson
 tests/test_e2e.py::TestExportFlow::test_geojson_is_valid
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/predict.py:136: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/predict.py:163: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     "timestamp": datetime.utcnow().isoformat(),
 
 tests/test_api.py::TestExport::test_csv
 tests/test_e2e.py::TestExportFlow::test_csv_has_headers
-  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/predict.py:176: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
+  /home/sage/Desktop/GeoShield/backend/tests/../app/routers/predict.py:203: DeprecationWarning: datetime.datetime.utcnow() is deprecated and scheduled for removal in a future version. Use timezone-aware objects to represent datetimes in UTC: datetime.datetime.now(datetime.UTC).
     "Content-Disposition": f"attachment; filename=geoshield_export_{datetime.utcnow().strftime('%Y%m%d')}.csv"
 
 tests/test_e2e.py::TestFloodFlow::test_flood_data_has_districts
@@ -204,4 +27,4 @@ tests/test_e2e.py::TestAlertWorkflow::test_acknowledge_alert
     alert.acknowledged_at = datetime.utcnow()
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-====================== 75 passed, 6416 warnings in 4.36s =======================
+======================= 83 passed, 860 warnings in 9.70s =======================

@@ -11,33 +11,48 @@ const isElectron = () => {
   } catch { return false; }
 };
 
-// Detect if running in mobile app (Capacitor)
+// Detect if running in mobile app (Capacitor/Cordova or file:// protocol)
 const isMobile = () => {
   try {
-    return typeof (window as any).Capacitor !== 'undefined';
+    if (typeof window === 'undefined') return false;
+    return typeof (window as any).Capacitor !== 'undefined' ||
+           typeof (window as any).cordova !== 'undefined' ||
+           /file:\/\//.test(window.location.href);
   } catch { return false; }
 };
 
 // For Electron/mobile: use localhost (backend runs locally)
 // For web: use relative URL (same origin)
+const normalizeHost = (h: string): string => {
+  let host = h.replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  if (!host.includes(':')) host += ':8000';
+  return host;
+};
+
 const getApiBase = () => {
   if (isElectron()) {
     const savedUrl = localStorage.getItem('geoshield_server_url');
-    return `${savedUrl || 'http://localhost:8000'}/api`;
+    if (savedUrl) return `http://${normalizeHost(savedUrl)}/api`;
+    return 'http://localhost:8000/api';
   }
   if (isMobile()) {
     const savedUrl = localStorage.getItem('geoshield_server_url');
-    if (savedUrl) return `${savedUrl}/api`;
+    if (savedUrl) return `http://${normalizeHost(savedUrl)}/api`;
+    // Default to localhost — works with adb reverse for USB-connected devices
     return 'http://localhost:8000/api';
   }
   return '/api';
 };
 
-const API_BASE = getApiBase();
-
 const api = axios.create({
-  baseURL: API_BASE,
   timeout: 20000,
+});
+
+// Dynamically set baseURL on every request so saved server URL changes
+// take effect without requiring a full page reload.
+api.interceptors.request.use((config) => {
+  config.baseURL = getApiBase();
+  return config;
 });
 
 // Allow mobile app to change server URL
@@ -234,12 +249,10 @@ export interface TimelineEntry {
 
 // --- Auth ---
 export const loginAPI = (email: string, password: string) => {
-  const formData = new FormData();
-  formData.append('email', email);
-  formData.append('password', password);
-  return api.post<{ token: string; user: { email: string; name: string; role: string } }>(
-    '/auth/login', formData, { headers: { 'Content-Type': 'multipart/form-data' } }
-  );
+  const params = new URLSearchParams();
+  params.append('email', email);
+  params.append('password', password);
+  return api.post<{ token: string; user: { email: string; name: string; role: string } }>('/auth/login', params);
 };
 
 // --- Dashboard ---
@@ -428,3 +441,4 @@ export const getMLDistrictRisk = (district: string) =>
 export const trainMLModel = () => api.post<{ message: string; details: any }>('/ml/train');
 
 export default api;
+export { api };

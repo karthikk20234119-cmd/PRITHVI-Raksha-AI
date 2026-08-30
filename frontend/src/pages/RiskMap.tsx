@@ -150,7 +150,7 @@ export default function RiskMap() {
         </div>
         {predictMode && (
           <div className="mt-2 text-xs text-purple-300 bg-purple-600/10 border border-purple-600/20 rounded-lg px-3 py-2">
-            🖱️ Click anywhere on the map to get AI risk prediction with XGBoost model and real NER terrain data
+            🖱️ Click anywhere on the map to get AI risk prediction with RF+GB ensemble model and real NER terrain data
           </div>
         )}
       </div>
@@ -286,7 +286,7 @@ export default function RiskMap() {
 
         {/* Click-to-Predict Result Panel */}
         {predictMode && (predictLoading || predictResult || predictError) && (
-          <div className="absolute top-4 right-4 z-[1000] w-80 glass rounded-xl border border-purple-600/30 shadow-2xl overflow-hidden">
+          <div className="absolute top-4 right-4 z-[1000] w-72 sm:w-80 glass rounded-xl border border-purple-600/30 shadow-2xl overflow-hidden">
             <div className="bg-purple-600/20 px-4 py-3 flex items-center justify-between">
               <h3 className="text-sm font-bold text-white flex items-center gap-2">
                 <MousePointerClick className="w-4 h-4 text-purple-400" />
@@ -384,7 +384,7 @@ export default function RiskMap() {
                     </div>
                   )}
                   <div className="pt-1">
-                    <p className="text-[10px] text-dark-500">Model: {predictResult.model_info?.type || 'XGBoost + RF+GB Ensemble'} | Features: {predictResult.model_info?.features || 9}</p>
+                    <p className="text-[10px] text-dark-500">Model: {predictResult.model_info?.type || 'RF+GB VotingClassifier'} | Features: {predictResult.model_info?.features || 9}</p>
                   </div>
                 </div>
               )}

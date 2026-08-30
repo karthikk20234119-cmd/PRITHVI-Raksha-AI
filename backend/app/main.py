@@ -9,6 +9,7 @@ from typing import List
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, HTTPException, Form
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from starlette.staticfiles import StaticFiles
 from starlette.responses import FileResponse
 from app.middleware.rate_limiter import RateLimiter
@@ -140,7 +141,8 @@ app.include_router(flood.router)
 app.include_router(ml_enhanced.router)
 
 
-@app.get("/api/health")
+@app.get("/health", response_class=JSONResponse)
+@app.get("/api/health", response_class=JSONResponse)
 def health_check():
     return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
 
@@ -199,9 +201,10 @@ if os.path.exists(os.path.join(FRONTEND_DIR, "assets")):
 if os.path.exists(FRONTEND_DIR):
     @app.get("/{full_path:path}", include_in_schema=False)
     async def serve_frontend(full_path: str):
-        # Skip API and WebSocket routes - let FastAPI handle them
-        if full_path.startswith("api/") or full_path.startswith("ws"):
-            return {"message": "Not found", "version": "1.0.0"}
+        # Skip ALL API, WebSocket, and health routes - never return HTML for these
+        if (full_path.startswith("api/") or full_path.startswith("ws") 
+            or full_path == "health" or full_path == "api"):
+            return JSONResponse({"message": "API endpoint not found", "path": full_path}, status_code=404)
         # Sanitize path to prevent path traversal attacks
         if full_path:
             normalized = os.path.normpath(full_path).lstrip(os.sep)

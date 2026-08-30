@@ -120,17 +120,17 @@ export default function Alerts() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-3 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Bell className="w-6 h-6 text-red-400" />
+          <h1 className="text-xl sm:text-2xl font-bold text-white flex items-center gap-2">
+            <Bell className="w-5 h-5 sm:w-6 sm:h-6 text-red-400" />
             {t('alerts')}
           </h1>
-          <p className="text-dark-400 text-sm mt-1">{t('earlyWarningSubtitle')}</p>
+          <p className="text-dark-400 text-xs sm:text-sm mt-1">{t('earlyWarningSubtitle')}</p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 overflow-x-auto pb-1">
           {[
             { key: 'list', icon: List, label: t('alerts') },
             { key: 'timeline', icon: Clock, label: t('timeline') },
@@ -139,7 +139,7 @@ export default function Alerts() {
             <button
               key={key}
               onClick={() => setView(key as any)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1 ${
+              className={`px-3 py-2 rounded-lg text-xs font-medium transition-all flex items-center gap-1 whitespace-nowrap min-h-[40px] ${
                 view === key
                   ? 'bg-green-600/20 text-green-400 border border-green-600/30'
                   : 'bg-dark-800 text-dark-400 border border-dark-700 hover:text-white'
@@ -152,21 +152,21 @@ export default function Alerts() {
       </div>
 
       {/* Alert Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
         {[
           { label: t('totalAlerts'), value: stats.total, icon: Bell, color: 'from-blue-500 to-cyan-500' },
           { label: t('active'), value: stats.active, icon: Radio, color: stats.active > 0 ? 'from-red-500 to-orange-500' : 'from-green-500 to-emerald-500', pulse: stats.active > 0 },
           { label: t('criticalLevelShort'), value: stats.critical, icon: AlertTriangle, color: 'from-red-600 to-red-500' },
           { label: t('highRiskLabel'), value: stats.high, icon: AlertTriangle, color: 'from-orange-500 to-amber-500' },
         ].map((card, i) => (
-          <div key={i} className={`glass rounded-xl p-4 ${card.pulse ? 'pulse-alert' : ''}`}>
-            <div className="flex items-center gap-2 mb-2">
-              <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center`}>
-                <card.icon className="w-4 h-4 text-white" />
+          <div key={i} className={`glass rounded-xl p-3 sm:p-4 ${card.pulse ? 'pulse-alert' : ''}`}>
+            <div className="flex items-center gap-2 mb-1 sm:mb-2">
+              <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center`}>
+                <card.icon className="w-3 h-3 sm:w-4 sm:h-4 text-white" />
               </div>
             </div>
-            <p className="text-2xl font-bold text-white">{card.value}</p>
-            <p className="text-xs text-dark-400">{card.label}</p>
+            <p className="text-xl sm:text-2xl font-bold text-white">{card.value}</p>
+            <p className="text-[10px] sm:text-xs text-dark-400">{card.label}</p>
           </div>
         ))}
       </div>
@@ -175,38 +175,40 @@ export default function Alerts() {
       {view === 'list' && (
         <>
           {/* Filters */}
-          <div className="flex flex-wrap gap-3">
-            <div className="flex gap-2">
-              <span className="text-xs text-dark-400 self-center">{t('filterByStatus')}:</span>
-              {['all', 'active', 'acknowledged', 'resolved'].map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setFilter(status)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    filter === status
-                      ? 'bg-green-600/20 text-green-400 border border-green-600/30'
-                      : 'bg-dark-800 text-dark-400 border border-dark-700 hover:text-white'
-                  }`}
-                >
-                  {status === 'all' ? t('all') : status === 'active' ? t('active') : status === 'acknowledged' ? t('acknowledged') : t('resolved')}
-                </button>
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <span className="text-xs text-dark-400 self-center">{t('filterByRisk')}:</span>
-              {['all', 'critical', 'high', 'moderate', 'low'].map((level) => (
-                <button
-                  key={level}
-                  onClick={() => setRiskFilter(level)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    riskFilter === level
-                      ? 'bg-green-600/20 text-green-400 border border-green-600/30'
-                      : 'bg-dark-800 text-dark-400 border border-dark-700 hover:text-white'
-                  }`}
-                >
-                  {level === 'all' ? t('allLevels') : level === 'critical' ? t('criticalLevelShort') : level === 'high' ? t('highRisk') : level === 'moderate' ? t('moderateRisk') : t('lowRisk')}
-                </button>
-              ))}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                <span className="text-xs text-dark-400 self-center whitespace-nowrap">{t('filterByStatus')}:</span>
+                {['all', 'active', 'acknowledged', 'resolved'].map((status) => (
+                  <button
+                    key={status}
+                    onClick={() => setFilter(status)}
+                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap min-h-[40px] ${
+                      filter === status
+                        ? 'bg-green-600/20 text-green-400 border border-green-600/30'
+                        : 'bg-dark-800 text-dark-400 border border-dark-700 hover:text-white'
+                    }`}
+                  >
+                    {status === 'all' ? t('all') : status === 'active' ? t('active') : status === 'acknowledged' ? t('acknowledged') : t('resolved')}
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2 overflow-x-auto pb-1">
+                <span className="text-xs text-dark-400 self-center whitespace-nowrap">{t('filterByRisk')}:</span>
+                {['all', 'critical', 'high', 'moderate', 'low'].map((level) => (
+                  <button
+                    key={level}
+                    onClick={() => setRiskFilter(level)}
+                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap min-h-[40px] ${
+                      riskFilter === level
+                        ? 'bg-green-600/20 text-green-400 border border-green-600/30'
+                        : 'bg-dark-800 text-dark-400 border border-dark-700 hover:text-white'
+                    }`}
+                  >
+                    {level === 'all' ? t('allLevels') : level === 'critical' ? t('criticalLevelShort') : level === 'high' ? t('highRisk') : level === 'moderate' ? t('moderateRisk') : t('lowRisk')}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
 
@@ -225,42 +227,41 @@ export default function Alerts() {
               {alerts.map((alert) => {
                 const style = RISK_STYLES[alert.risk_level] || RISK_STYLES.low;
                 return (
-                  <div
-                    key={alert.id}
-                    className={`glass rounded-xl p-5 border ${style.border} ${style.bg} transition-smooth hover:scale-[1.01]`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <span className="text-lg">{style.icon}</span>
-                          <div>
-                            <h3 className="font-semibold text-white">{alert.title}</h3>
-                            <div className="flex items-center gap-3 text-xs text-dark-400">
-                              <span className={`px-2 py-0.5 rounded-full ${style.bg} ${style.text} font-medium border ${style.border}`}>
-                                {alert.risk_level.toUpperCase()}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <Clock className="w-3 h-3" />
-                                {new Date(alert.created_at).toLocaleString()}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <MapPin className="w-3 h-3" />
-                                {alert.station_id}
-                              </span>
-                              {alert.affected_population > 0 && (
-                                <span className="flex items-center gap-1">
-                                  <Users className="w-3 h-3" />
-                                  {alert.affected_population.toLocaleString()} {t('people')}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <p className="text-sm text-dark-300 mt-2 ml-8">{alert.message}</p>
-                      </div>
+                   <div
+                     key={alert.id}
+                     className={`glass rounded-xl p-3 sm:p-5 border ${style.border} ${style.bg} transition-smooth`}
+                   >
+                     <div className="flex flex-col gap-3">
+                       <div className="flex items-start gap-3">
+                         <span className="text-base sm:text-lg">{style.icon}</span>
+                         <div className="flex-1 min-w-0">
+                           <h3 className="font-semibold text-white text-sm sm:text-base">{alert.title}</h3>
+                           <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-dark-400 mt-1">
+                             <span className={`px-1.5 py-0.5 rounded-full ${style.bg} ${style.text} font-medium border ${style.border}`}>
+                               {alert.risk_level.toUpperCase()}
+                             </span>
+                             <span className="flex items-center gap-1">
+                               <Clock className="w-3 h-3" />
+                               {new Date(alert.created_at).toLocaleString()}
+                             </span>
+                             <span className="flex items-center gap-1">
+                               <MapPin className="w-3 h-3" />
+                               {alert.station_id}
+                             </span>
+                             {alert.affected_population > 0 && (
+                               <span className="flex items-center gap-1">
+                                 <Users className="w-3 h-3" />
+                                 {alert.affected_population.toLocaleString()} {t('people')}
+                               </span>
+                             )}
+                           </div>
+                         </div>
+                       </div>
 
-                      {/* Actions */}
-                      <div className="flex items-center gap-2 ml-4">
+                       <p className="text-xs sm:text-sm text-dark-300 ml-0 sm:ml-8">{alert.message}</p>
+
+                       {/* Actions */}
+                       <div className="flex flex-wrap items-center gap-2 ml-0 sm:ml-8">
                         {alert.status === 'active' && canAcknowledge && (
                           <>
                             <button

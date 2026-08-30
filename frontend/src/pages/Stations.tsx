@@ -107,39 +107,40 @@ export default function Stations() {
       </div>
 
       {/* Search & Filters */}
-      <div className="flex flex-wrap gap-3">
-        <div className="flex-1 min-w-[200px] relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder={t('searchStations')}
-            className="w-full pl-10 pr-4 py-2 rounded-xl bg-dark-800 border border-dark-700 text-white text-sm placeholder-dark-500 focus:outline-none focus:border-green-600/50 transition-all"
-          />
+      <div className="flex flex-col gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-dark-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder={t('searchStations')}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-dark-800 border border-dark-700 text-white text-sm placeholder-dark-500 focus:outline-none focus:border-green-600/50 transition-all"
+            />
+          </div>
+          <div className="flex gap-2 overflow-x-auto pb-1">
+            {['all', 'critical', 'high', 'moderate', 'low'].map((level) => (
+              <button
+                key={level}
+                onClick={() => setRiskFilter(level)}
+                className={`px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap min-h-[40px] ${
+                  riskFilter === level
+                    ? 'bg-green-600/20 text-green-400 border border-green-600/30'
+                    : 'bg-dark-800 text-dark-400 border border-dark-700 hover:text-white'
+                }`}
+              >
+                {level === 'all' ? t('allLevels') : level === 'critical' ? t('criticalLevelShort') : level === 'high' ? t('highRisk') : level === 'moderate' ? t('moderateRisk') : t('lowRisk')}
+              </button>
+            ))}
+          </div>
         </div>
-        <div className="flex gap-2">
-          <span className="text-xs text-dark-400 self-center"><Filter className="w-3 h-3 inline mr-1" />{t('filterByRisk')}:</span>
-          {['all', 'critical', 'high', 'moderate', 'low'].map((level) => (
-            <button
-              key={level}
-              onClick={() => setRiskFilter(level)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                riskFilter === level
-                  ? 'bg-green-600/20 text-green-400 border border-green-600/30'
-                  : 'bg-dark-800 text-dark-400 border border-dark-700 hover:text-white'
-              }`}
-            >
-              {level === 'all' ? t('allLevels') : level === 'critical' ? t('criticalLevelShort') : level === 'high' ? t('highRisk') : level === 'moderate' ? t('moderateRisk') : t('lowRisk')}
-            </button>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <span className="text-xs text-dark-400 self-center">{t('state')}:</span>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-dark-400"><Filter className="w-3 h-3 inline mr-1" />{t('state')}:</span>
           <select
             value={stateFilter}
             onChange={(e) => setStateFilter(e.target.value)}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-dark-800 text-dark-400 border border-dark-700 hover:text-white focus:outline-none focus:border-green-600/50 transition-all"
+            className="px-3 py-2 rounded-lg text-xs font-medium bg-dark-800 text-dark-400 border border-dark-700 hover:text-white focus:outline-none focus:border-green-600/50 transition-all min-h-[40px]"
           >
             <option value="all">{t('all')}</option>
             {states.map(s => (
@@ -180,7 +181,7 @@ export default function Stations() {
                       <h3 className="text-sm font-semibold text-white group-hover:text-green-400 transition-colors">
                         {station.name}
                       </h3>
-                      <p className="text-[10px] text-dark-500">{station.station_id}</p>
+                      <p className="text-xs text-dark-500">{station.station_id}</p>
                     </div>
                   </div>
                   <ChevronRight className="w-4 h-4 text-dark-500 group-hover:text-green-400 transition-colors" />
@@ -196,17 +197,17 @@ export default function Stations() {
                   <div className="text-center p-1.5 rounded-lg bg-dark-800/50">
                     <Droplets className="w-3 h-3 text-blue-400 mx-auto mb-0.5" />
                     <p className="text-xs font-bold text-white">{station.latest_reading?.rainfall_mm || 0}</p>
-                    <p className="text-[9px] text-dark-500">mm</p>
+                    <p className="text-[10px] text-dark-500">mm</p>
                   </div>
                   <div className="text-center p-1.5 rounded-lg bg-dark-800/50">
                     <Mountain className="w-3 h-3 text-emerald-400 mx-auto mb-0.5" />
                     <p className="text-xs font-bold text-white">{station.elevation}</p>
-                    <p className="text-[9px] text-dark-500">m</p>
+                    <p className="text-[10px] text-dark-500">m</p>
                   </div>
                   <div className="text-center p-1.5 rounded-lg bg-dark-800/50">
                     <TrendingUp className="w-3 h-3 text-orange-400 mx-auto mb-0.5" />
                     <p className="text-xs font-bold text-white">{station.slope_angle}°</p>
-                    <p className="text-[9px] text-dark-500">{t('slope')}</p>
+                    <p className="text-[10px] text-dark-500">{t('slope')}</p>
                   </div>
                 </div>
 

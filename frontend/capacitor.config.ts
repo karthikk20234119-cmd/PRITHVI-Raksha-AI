@@ -5,7 +5,10 @@ const config: CapacitorConfig = {
   appName: 'GeoShield',
   webDir: 'dist',
   server: {
+    url: 'http://localhost:8000',
+    cleartext: true,
     allowNavigation: ['*'],
+    androidScheme: 'http',
   },
   android: {
     allowMixedContent: true,

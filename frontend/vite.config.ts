@@ -20,13 +20,13 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-router': ['react-router-dom'],
-          'vendor-charts': ['recharts'],
-          'vendor-maps': ['leaflet', 'react-leaflet'],
-          'vendor-ui': ['lucide-react', 'axios'],
-        },
+        manualChunks: (id) => {
+        if (id.includes('react') && (id.includes('/node_modules/react') || id.includes('node_modules/react'))) return 'vendor-react'
+        if (id.includes('react-router-dom')) return 'vendor-router'
+        if (id.includes('recharts')) return 'vendor-charts'
+        if (id.includes('leaflet') || id.includes('react-leaflet')) return 'vendor-maps'
+        if (id.includes('lucide-react') || id.includes('axios')) return 'vendor-ui'
+      },
       },
     },
   },

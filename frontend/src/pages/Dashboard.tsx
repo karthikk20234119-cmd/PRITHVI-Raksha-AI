@@ -176,13 +176,13 @@ export default function Dashboard() {
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-3 mb-1">
-            <Shield className="w-8 h-8 text-green-400" />
+            <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-green-400" />
             <div>
-              <h1 className="text-2xl font-bold text-white">{t('dashboard')}</h1>
-              <p className="text-dark-400 text-sm">{t('regionSubtitle')}</p>
+              <h1 className="text-lg sm:text-2xl font-bold text-white">{t('dashboard')}</h1>
+              <p className="text-dark-400 text-xs sm:text-sm">{t('regionSubtitle')}</p>
             </div>
           </div>
         </div>
@@ -193,7 +193,7 @@ export default function Dashboard() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                className={`px-2 sm:px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                   activeTab === tab
                     ? 'bg-green-600/20 text-green-400 border border-green-600/30'
                     : 'text-dark-400 hover:text-white border border-transparent'
