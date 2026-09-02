@@ -3,9 +3,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# Use DATABASE_URL env var if set (e.g. PostgreSQL for production),
-# otherwise fall back to local SQLite for development.
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./geoshield.db")
+if os.getenv("VERCEL"):
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:////tmp/geoshield.db")
+else:
+    DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./geoshield.db")
 
 # SQLite-specific args (not needed for PostgreSQL/MySQL)
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
