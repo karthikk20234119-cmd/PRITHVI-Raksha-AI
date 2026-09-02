@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Zap, Map, AlertTriangle, Plus, X, Radio } from 'lucide-react';
+import { Zap, Map, AlertTriangle, Plus, X, Radio, Settings } from 'lucide-react';
 import { t } from '../i18n/translations';
 
 export default function MobileFAB() {
@@ -8,6 +8,7 @@ export default function MobileFAB() {
   const navigate = useNavigate();
 
   const actions = [
+    { icon: Settings, label: t('settings'), path: '/settings', color: 'from-purple-500 to-indigo-500' },
     { icon: Zap, label: t('simulateFab'), path: '/simulator', color: 'from-orange-500 to-red-500' },
     { icon: Map, label: t('riskMapFab'), path: '/map', color: 'from-blue-500 to-cyan-500' },
     { icon: AlertTriangle, label: t('alertsFab'), path: '/alerts', color: 'from-red-500 to-pink-500' },

@@ -1,5 +1,5 @@
 """
-GeoShield - AI-Based Early Warning and Landslide Risk Monitoring System
+PRITHVI-Raksha AI - AI-Based Early Warning and Landslide Risk Monitoring System
 Backend API Server for Smart India Hackathon 2026
 """
 import os
@@ -64,11 +64,11 @@ def init_database():
                 capture_output=True, text=True, timeout=30
             )
             if result.returncode != 0:
-                print(f"[GeoShield] ⚠️  Alembic error: {result.stderr}")
+                print(f"[PRITHVI-Raksha AI] ⚠️  Alembic error: {result.stderr}")
             else:
-                print("[GeoShield] ✅ Alembic migrations applied")
+                print("[PRITHVI-Raksha AI] ✅ Alembic migrations applied")
         except Exception as e:
-            print(f"[GeoShield] ⚠️  Alembic failed: {e}, falling back to create_all")
+            print(f"[PRITHVI-Raksha AI] ⚠️  Alembic failed: {e}, falling back to create_all")
             Base.metadata.create_all(bind=engine)
     else:
         # Development: create_all for instant setup
@@ -81,10 +81,10 @@ def init_database():
             from app.seed_data import seed_database
             seed_database()
         else:
-            print("[GeoShield] Database already seeded, skipping.")
+            print("[PRITHVI-Raksha AI] Database already seeded, skipping.")
     finally:
         db.close()
-    print("[GeoShield] ✅ Database ready")
+    print("[PRITHVI-Raksha AI] ✅ Database ready")
 
     # Auto-refresh satellite data if stale (>6 hours old)
     try:
@@ -100,13 +100,13 @@ def init_database():
                     try:
                         last_dt = _dt.fromisoformat(last_update)
                         if _dt.utcnow() - last_dt > _td(hours=6):
-                            print("[GeoShield] 🛰️  Satellite data stale (>6h), run 'python datasets/download_real_data.py' to refresh")
+                            print("[PRITHVI-Raksha AI] 🛰️  Satellite data stale (>6h), run 'python datasets/download_real_data.py' to refresh")
                         else:
-                            print(f"[GeoShield] 🛰️  Satellite data fresh (updated {last_update})")
+                            print(f"[PRITHVI-Raksha AI] 🛰️  Satellite data fresh (updated {last_update})")
                     except (ValueError, TypeError):
                         pass
     except Exception as e:
-        print(f"[GeoShield] ⚠️  Satellite check skipped: {e}")
+        print(f"[PRITHVI-Raksha AI] ⚠️  Satellite check skipped: {e}")
 
 
 init_database()
@@ -114,7 +114,7 @@ init_database()
 FRONTEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "frontend", "dist"))
 
 app = FastAPI(
-    title="GeoShield API",
+    title="PRITHVI-Raksha AI API",
     description="AI-Based Early Warning and Landslide Risk Monitoring System for NER",
     version="1.0.0",
 )
@@ -220,4 +220,4 @@ if os.path.exists(FRONTEND_DIR):
         index_path = os.path.join(FRONTEND_DIR, "index.html")
         if os.path.isfile(index_path):
             return FileResponse(index_path)
-        return {"message": "GeoShield API", "version": "1.0.0"}
+        return {"message": "PRITHVI-Raksha AI API", "version": "1.0.0"}

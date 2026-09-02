@@ -12,12 +12,13 @@ import SatelliteData from './pages/SatelliteData';
 import DemoFlow from './pages/DemoFlow';
 import FloodData from './pages/FloodData';
 import Stations from './pages/Stations';
+import Settings from './pages/Settings';
 import ErrorBoundary from './components/ErrorBoundary';
 import MobileFAB from './components/MobileFAB';
 import {
   LayoutDashboard, Map, AlertTriangle, FileText, Globe, Shield, Radio,
   ChevronLeft, Clock, LogOut, User, Bell, Search, Activity, Mountain,
-  Droplets, BarChart3, Settings, Home, TrendingUp, Building2, MapPin, Zap, Satellite, Rocket, Waves,
+  Droplets, BarChart3, Settings as SettingsIcon, Home, TrendingUp, Building2, MapPin, Zap, Satellite, Rocket, Waves,
 } from 'lucide-react';
 
 interface AuthContextType {
@@ -167,7 +168,7 @@ function LoginPage() {
     setLoading(true);
     setError('');
     try {
-      const res = await loginAPI(email || 'admin@geoshield.gov.in', password || 'admin123');
+      const res = await loginAPI(email || 'admin@prithvi-raksha.gov.in', password || 'admin123');
       setStoredToken(res.data.token);
       login(res.data.user.name, res.data.user.role);
       navigate('/');
@@ -286,9 +287,9 @@ function LoginPage() {
         <div className="glass rounded-2xl p-8 border border-dark-700">
           <div className="text-center mb-8">
             <div className="mx-auto mb-4">
-              <img src="/geoshield_logo.svg" alt="GeoShield Logo" className="w-20 h-20 mx-auto rounded-2xl shadow-lg shadow-green-600/20" />
+              <img src="/geoshield_logo.svg" alt="PRITHVI-Raksha AI Logo" className="w-20 h-20 mx-auto rounded-2xl shadow-lg shadow-green-600/20" />
             </div>
-            <h1 className="text-2xl font-bold text-white">GeoShield</h1>
+            <h1 className="text-2xl font-bold text-white">PRITHVI-Raksha AI</h1>
             <p className="text-dark-400 text-sm mt-1">AI-Based Landslide Risk Monitoring</p>
             <p className="text-dark-500 text-xs mt-0.5">North Eastern Region, India</p>
           </div>
@@ -347,7 +348,7 @@ function LoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@geoshield.gov.in"
+                placeholder="admin@prithvi-raksha.gov.in"
                 className="w-full px-4 py-3 rounded-xl bg-dark-800 border border-dark-700 text-white text-sm placeholder-dark-500 focus:outline-none focus:border-green-600/50 focus:ring-1 focus:ring-green-600/30 transition-all"
               />
             </div>
@@ -412,10 +413,10 @@ function LoginPage() {
           </div>
           <div className="mt-4 grid grid-cols-2 gap-2">
             {[
-              { email: 'admin@geoshield.gov.in', password: 'admin123', label: t('adminRole') },
-              { email: 'field@geoshield.gov.in', password: 'field123', label: t('fieldOfficerRole') },
-              { email: 'district@geoshield.gov.in', password: 'district123', label: t('districtAdminRole') },
-              { email: 'citizen@geoshield.gov.in', password: 'demo123', label: t('citizenRole') },
+              { email: 'admin@prithvi-raksha.gov.in', password: 'admin123', label: t('adminRole') },
+              { email: 'field@prithvi-raksha.gov.in', password: 'field123', label: t('fieldOfficerRole') },
+              { email: 'district@prithvi-raksha.gov.in', password: 'district123', label: t('districtAdminRole') },
+              { email: 'citizen@prithvi-raksha.gov.in', password: 'demo123', label: t('citizenRole') },
             ].map((demo) => (
               <button
                 key={demo.email}
@@ -478,6 +479,7 @@ function MainLayout() {
     { to: '/satellite', icon: Satellite, label: t('satellite'), badge: null },
     { to: '/flood', icon: Waves, label: t('floodRisk'), badge: null },
     { to: '/demo', icon: Rocket, label: t('demoFlow'), badge: null },
+    { to: '/settings', icon: SettingsIcon, label: t('settings'), badge: null },
   ];
 
   return (
@@ -498,11 +500,11 @@ function MainLayout() {
         <div className="p-4 border-b border-dark-700">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0 shadow-lg shadow-green-600/20">
-              <img src="/geoshield_logo.svg" alt="GeoShield" className="w-full h-full object-cover" />
+              <img src="/geoshield_logo.svg" alt="PRITHVI-Raksha AI" className="w-full h-full object-cover" />
             </div>
             {sidebarOpen && (
               <div className="min-w-0">
-                <h1 className="text-lg font-bold text-white truncate">GeoShield</h1>
+                <h1 className="text-lg font-bold text-white truncate">PRITHVI-Raksha AI</h1>
                 <p className="text-[10px] text-dark-400 truncate">{t('nerLandslideMonitor')}</p>
               </div>
             )}
@@ -697,6 +699,19 @@ function MainLayout() {
                 {currentTime.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true })}
               </span>
             </div>
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                `p-1.5 rounded-lg border transition-all flex items-center justify-center ${
+                  isActive
+                    ? 'bg-green-600/20 text-green-400 border-green-600/30'
+                    : 'bg-dark-800 border-dark-700 text-dark-300 hover:text-white hover:border-dark-600'
+                }`
+              }
+              title="Settings"
+            >
+              <SettingsIcon className="w-3.5 h-3.5" />
+            </NavLink>
             <div className="px-2 py-1 rounded-lg bg-blue-600/10 border border-blue-600/20">
               <span className="text-[10px] text-blue-400 font-medium">SIH 2026</span>
             </div>
@@ -717,6 +732,7 @@ function MainLayout() {
             <Route path="/satellite" element={<SatelliteData />} />
             <Route path="/flood" element={<FloodData />} />
             <Route path="/demo" element={<DemoFlow />} />
+            <Route path="/settings" element={<Settings />} />
           </Routes>
         </main>
       </div>

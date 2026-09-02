@@ -1,5 +1,5 @@
 """
-JWT Authentication for GeoShield API.
+JWT Authentication for PRITHVI-Raksha AI API.
 Provides token creation, verification, and FastAPI dependency injection.
 """
 import os
@@ -28,11 +28,20 @@ security = HTTPBearer(auto_error=False)
 
 # Demo user database (in production, use a real DB with hashed passwords)
 # Passwords are hashed with bcrypt
+_ADMIN_USER = {"password_hash": _hash_password("admin123"), "name": "Admin", "role": "admin"}
+_FIELD_USER = {"password_hash": _hash_password("field123"), "name": "Field Officer", "role": "field_officer"}
+_DISTRICT_USER = {"password_hash": _hash_password("district123"), "name": "District Admin", "role": "district_admin"}
+_CITIZEN_USER = {"password_hash": _hash_password("demo123"), "name": "Citizen", "role": "citizen"}
+
 DEMO_USERS = {
-    "admin@geoshield.gov.in": {"password_hash": _hash_password("admin123"), "name": "Admin", "role": "admin"},
-    "field@geoshield.gov.in": {"password_hash": _hash_password("field123"), "name": "Field Officer", "role": "field_officer"},
-    "district@geoshield.gov.in": {"password_hash": _hash_password("district123"), "name": "District Admin", "role": "district_admin"},
-    "citizen@geoshield.gov.in": {"password_hash": _hash_password("demo123"), "name": "Citizen", "role": "citizen"},
+    "admin@prithvi-raksha.gov.in": _ADMIN_USER,
+    "field@prithvi-raksha.gov.in": _FIELD_USER,
+    "district@prithvi-raksha.gov.in": _DISTRICT_USER,
+    "citizen@prithvi-raksha.gov.in": _CITIZEN_USER,
+    "admin@geoshield.gov.in": _ADMIN_USER,
+    "field@geoshield.gov.in": _FIELD_USER,
+    "district@geoshield.gov.in": _DISTRICT_USER,
+    "citizen@geoshield.gov.in": _CITIZEN_USER,
 }
 
 

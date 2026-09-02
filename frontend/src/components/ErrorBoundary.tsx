@@ -22,7 +22,7 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: any) {
-    console.error('[GeoShield] Component crashed:', error, errorInfo);
+    console.error('[PRITHVI-Raksha AI] Component crashed:', error, errorInfo);
   }
 
   handleReload = () => {
@@ -71,7 +71,7 @@ export default class ErrorBoundary extends Component<Props, State> {
                 </button>
               </div>
               <p className="text-[10px] text-dark-500 mt-4">
-                GeoShield • SIH 2026 • If this persists, check the backend server.
+                PRITHVI-Raksha AI • SIH 2026 • If this persists, check the backend server.
               </p>
             </div>
           </div>

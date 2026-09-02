@@ -1,8 +1,8 @@
 <div align="center">
 
-<img src="branding/team_logo.png" alt="GeoShield Logo" width="200" />
+<img src="branding/team_logo.png" alt="PRITHVI-Raksha AI Logo" width="200" />
 
-# 🛡️ GeoShield
+# 🛡️ PRITHVI-Raksha AI
 
 ### AI-Based Early Warning & Landslide Risk Monitoring System
 **North Eastern Region, India — Smart India Hackathon 2026**

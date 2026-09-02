@@ -82,7 +82,7 @@ const allKeys = [
 
 export const translations: Record<Language, Record<string, string>> = {
   en: {
-    appName: 'GeoShield',
+    appName: 'PRITHVI-Raksha AI',
     tagline: 'AI-Based Landslide Risk Monitoring',
     region: 'North Eastern Region',
     dashboard: 'Dashboard',
@@ -313,7 +313,7 @@ export const translations: Record<Language, Record<string, string>> = {
     rainfallHistory: 'Rainfall History',
     soilMoistureDisplacement: 'Soil Moisture & Ground Displacement',
     weatherTitle: 'Weather',
-    signInToGeoShield: 'Sign In to GeoShield',
+    signInToGeoShield: 'Sign In to PRITHVI-Raksha AI',
     demoLoginHint: 'Demo: Click a button below to auto-fill credentials',
     adminRole: 'Admin',
     fieldOfficerRole: 'Field Officer',
@@ -516,7 +516,7 @@ export const translations: Record<Language, Record<string, string>> = {
     disasterResponse: 'आपदा प्रतिक्रिया',
     evacuationPlan: 'निकासी योजना',
     emergencyContacts: 'आपातकालीन संपर्क',
-    initializing: 'GeoShield आरंभ हो रहा है',
+    initializing: 'PRITHVI-Raksha AI आरंभ हो रहा है',
     connectingSensors: 'सेंसर नेटवर्क से जुड़ रहा है...',
     failedToLoad: 'डैशबोर्ड डेटा लोड करने में विफल',
     regionSubtitle: 'पूर्वोत्तर क्षेत्र भूस्खलन जोखिम निगरानी',
@@ -659,7 +659,7 @@ export const translations: Record<Language, Record<string, string>> = {
     soilMoistureDisplacement: 'मिट्टी की नमी और भूमि विस्थापन',
     weatherTitle: 'मौसम',
     // App login
-    signInToGeoShield: 'GeoShield में साइन इन करें',
+    signInToGeoShield: 'PRITHVI-Raksha AI में साइन इन करें',
     demoLoginHint: 'डेमो: लॉगिन के लिए कोई भी ईमेल और पासवर्ड दर्ज करें',
     adminRole: 'एडमिन',
     fieldOfficerRole: 'फील्ड अधिकारी',
@@ -857,7 +857,7 @@ export const translations: Record<Language, Record<string, string>> = {
     disasterResponse: 'দুর্যোগ প্রতিক্রিয়া',
     evacuationPlan: 'অপসারণ পরিকল্পনা',
     emergencyContacts: 'জরুরি যোগাযোগ',
-    initializing: 'GeoShield চালু হচ্ছে',
+    initializing: 'PRITHVI-Raksha AI চালু হচ্ছে',
     connectingSensors: 'সেন্সর নেটওয়ার্কে সংযোগ হচ্ছে...',
     failedToLoad: 'ড্যাশবোর্ড ডেটা লোড করতে ব্যর্থ',
     regionSubtitle: 'উত্তর-পূর্ব অঞ্চল ভূমিধস় ঝুঁকি পর্যবেক্ষণ',
@@ -1000,7 +1000,7 @@ export const translations: Record<Language, Record<string, string>> = {
     soilMoistureDisplacement: 'মাটির আর্দ্রতা ও ভূমি সরণ',
     weatherTitle: 'আবহাওয়া',
     // App login
-    signInToGeoShield: 'GeoShield-এ সাইন ইন করুন',
+    signInToGeoShield: 'PRITHVI-Raksha AI-এ সাইন ইন করুন',
     demoLoginHint: 'ডেমো: লগইনের জন্য যেকোনো ইমেইল ও পাসওয়ার্ড লিখুন',
     adminRole: 'অ্যাডমিন',
     fieldOfficerRole: 'ফিল্ড অফিসার',
@@ -1198,7 +1198,7 @@ export const translations: Record<Language, Record<string, string>> = {
     disasterResponse: 'দুৰ্যোগ প্ৰতিক্ৰিয়া',
     evacuationPlan: 'উদ্ধৰণ পৰিকল্পনা',
     emergencyContacts: 'জৰুৰীকালীন সংযোগ',
-    initializing: 'GeoShield আৰম্ভ হৈ আছে',
+    initializing: 'PRITHVI-Raksha AI আৰম্ভ হৈ আছে',
     connectingSensors: 'ছেন্সৰ নেটৱৰ্কলৈ সংযোগ হৈ আছে...',
     failedToLoad: "ডেশবৰ্ড তথ্য ল'ড কৰিবলৈ ব্যৰ্থ",
     regionSubtitle: 'উত্তৰ-পূৰ্ব ঞ্চল ভূমিধস়ৰ বিপদ নিৰীক্ষণ',
@@ -1341,7 +1341,7 @@ export const translations: Record<Language, Record<string, string>> = {
     soilMoistureDisplacement: 'মাটিৰ আৰ্দ্ৰতা আৰু ভূমি স্থানান্তৰ',
     weatherTitle: 'আবহাওয়া',
     // App login
-    signInToGeoShield: 'GeoShield-ত ছাইন ইন কৰক',
+    signInToGeoShield: 'PRITHVI-Raksha AI-ত ছাইন ইন কৰক',
     demoLoginHint: 'ডেমো: লগইনৰ বাবে যিকোনো ইমেইল আৰু পাছৱৰ্ড লিখক',
     adminRole: 'এডমিন',
     fieldOfficerRole: 'ফিল্ড অফিছাৰ',
